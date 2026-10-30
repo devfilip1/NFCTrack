@@ -1,0 +1,9 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\ShortLink.Application\ShortLink.Application.csproj" />
+  </ItemGroup>
+
+</Project>
