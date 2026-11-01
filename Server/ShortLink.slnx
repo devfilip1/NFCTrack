@@ -1,7 +1,9 @@
 <Solution>
   <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
     <File Path="Directory.Build.props" />
     <File Path="Directory.Packages.props" />
+    <File Path="global.json" />
     <File Path="nuget.config" />
   </Folder>
   <Project Path="src/ShortLink.Api/ShortLink.Api.csproj" Id="7ad48c5e-dd5d-494d-b3d5-acceda7b253c" />
