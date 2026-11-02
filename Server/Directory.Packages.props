@@ -7,6 +7,7 @@
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.12" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.14" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.14" />
+    <PackageVersion Include="Scalar.AspNetCore" Version="2.18.7" />
   </ItemGroup>
   <ItemGroup Label="Transitive pins">
     <!-- Pulled in by Microsoft.Data.SqlClient; 9.0.11 has GHSA-846f-f764-76mx and GHSA-2fmv-rv2c-59x7 -->

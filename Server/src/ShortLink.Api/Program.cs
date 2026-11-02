@@ -1,3 +1,4 @@
+using Scalar.AspNetCore;
 using ShortLink.Api.Endpoints;
 using ShortLink.Api.ErrorHandling;
 using ShortLink.Application.Links;
@@ -20,6 +21,7 @@ app.UseStatusCodePages();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
 }
 
 app.UseHttpsRedirection();
