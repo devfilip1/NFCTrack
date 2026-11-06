@@ -2,7 +2,7 @@
 
 namespace ShortLink.Application.Links;
 
-public sealed class LinkService(ILinkRepository links, TimeProvider timeProvider)
+public sealed class LinkService(ILinkRepository links, TimeProvider timeProvider, ILinkCache cache)
 {
     private const int MaxSlugGenerationAttempts = 5;
 
@@ -31,10 +31,19 @@ public sealed class LinkService(ILinkRepository links, TimeProvider timeProvider
         var normalizedSlug = Slug.Normalize(slug);
         if (!Slug.IsValid(normalizedSlug))
             return null;
-        
+
+        var cachedDestination = await cache.GetDestinationAsync(normalizedSlug, cancellationToken);
+
+        if (cachedDestination != null) return cachedDestination;
+
 
         var link = await links.GetBySlugAsync(normalizedSlug, cancellationToken);
-        return link?.DestinationUrl;
+
+        if (link is null) return null;
+
+        await cache.SetDestinationAsync(normalizedSlug, link.DestinationUrl, cancellationToken);
+
+        return link.DestinationUrl;
     }
 
     public async Task<IReadOnlyList<LinkResponse>> ListAsync(CancellationToken cancellationToken)
@@ -47,12 +56,14 @@ public sealed class LinkService(ILinkRepository links, TimeProvider timeProvider
     {
         var link = await links.GetByIdAsync(id, cancellationToken);
 
-        if (link is null) 
+        if (link is null)
             return false;
 
         links.Remove(link);
 
         await links.SaveChangesAsync(cancellationToken);
+
+        await cache.RemoveAsync(link.Slug, cancellationToken);
 
         return true;
     }
@@ -67,6 +78,8 @@ public sealed class LinkService(ILinkRepository links, TimeProvider timeProvider
         link.ChangeDestination(request.DestinationUrl, timeProvider.GetUtcNow());
 
         await links.SaveChangesAsync(cancellationToken);
+
+        await cache.RemoveAsync(link.Slug, cancellationToken);
 
         return LinkResponse.From(link);
     }
@@ -86,7 +99,7 @@ public sealed class LinkService(ILinkRepository links, TimeProvider timeProvider
             var candidate = Slug.Generate();
             if (!await links.SlugExistsAsync(candidate, cancellationToken))
                 return candidate;
-            
+
         }
 
         throw new InvalidOperationException("Could not generate a unique slug.");
