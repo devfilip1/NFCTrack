@@ -3,6 +3,7 @@ using ShortLink.Api.Endpoints;
 using ShortLink.Api.ErrorHandling;
 using ShortLink.Application.Links;
 using ShortLink.Infrastructure;
+using ShortLink.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,7 @@ app.UseStatusCodePages();
 
 if (app.Environment.IsDevelopment())
 {
+    await app.Services.ApplyMigrationsAsync();
     app.MapOpenApi();
     app.MapScalarApiReference();
 }
