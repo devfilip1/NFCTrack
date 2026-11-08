@@ -6,6 +6,8 @@ using ShortLink.Infrastructure.Persistence;
 using ShortLink.Infrastructure.Persistence.Repositories;
 using ShortLink.Infrastructure.Caching;
 using ShortLink.Application.Clicks;
+using MassTransit;
+using ShortLink.Infrastructure.Messaging;
 
 namespace ShortLink.Infrastructure;
 
@@ -30,4 +32,35 @@ public static class DependencyInjection
         return services;
     }
 
+    public static IServiceCollection AddMessaging(this IServiceCollection services, IConfiguration configuration, Action<IBusRegistrationConfigurator>? configureConsumers = null)
+    {
+        var host = configuration["RabbitMq:Host"] ?? throw new InvalidOperationException("Configuration 'RabbitMq:Host' was not found.");
+        var username = configuration["RabbitMq:Username"] ?? throw new InvalidOperationException("Configuration 'RabbitMq:Username' was not found.");
+        var password = configuration["RabbitMq:Password"] ?? throw new InvalidOperationException("Configuration 'RabbitMq:Password' was not found.");
+
+        services.AddMassTransit(x =>
+        {
+            configureConsumers?.Invoke(x);
+
+            x.UsingRabbitMq((context, cfg) =>
+            {
+                cfg.Host(host, "/", h =>
+                {
+                    h.Username(username);
+                    h.Password(password);
+                });
+
+                cfg.UseMessageRetry(r => r.Intervals(
+                    TimeSpan.FromSeconds(1),
+                    TimeSpan.FromSeconds(5),
+                    TimeSpan.FromSeconds(15)));
+
+                cfg.ConfigureEndpoints(context);
+            });
+        });
+
+        services.AddScoped<IClickTracker, MassTransitClickTracker>();
+
+        return services;
+    }
 }
