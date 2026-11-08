@@ -22,6 +22,32 @@ namespace ShortLink.Infrastructure.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("ShortLink.Domain.Clicks.Click", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("LinkId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("OccurredAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Referrer")
+                        .HasMaxLength(2048)
+                        .HasColumnType("nvarchar(2048)");
+
+                    b.Property<string>("UserAgent")
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LinkId", "OccurredAt");
+
+                    b.ToTable("Clicks", (string)null);
+                });
+
             modelBuilder.Entity("ShortLink.Domain.Links.Link", b =>
                 {
                     b.Property<Guid>("Id")
@@ -50,6 +76,15 @@ namespace ShortLink.Infrastructure.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("Links", (string)null);
+                });
+
+            modelBuilder.Entity("ShortLink.Domain.Clicks.Click", b =>
+                {
+                    b.HasOne("ShortLink.Domain.Links.Link", null)
+                        .WithMany()
+                        .HasForeignKey("LinkId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

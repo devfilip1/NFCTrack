@@ -5,6 +5,7 @@ using ShortLink.Application.Links;
 using ShortLink.Infrastructure.Persistence;
 using ShortLink.Infrastructure.Persistence.Repositories;
 using ShortLink.Infrastructure.Caching;
+using ShortLink.Application.Clicks;
 
 namespace ShortLink.Infrastructure;
 
@@ -23,6 +24,7 @@ public static class DependencyInjection
         });
 
         services.AddScoped<ILinkRepository, LinkRepository>();
+        services.AddScoped<IClickRepository, ClickRepository>();
         services.AddSingleton<ILinkCache, RedisLinkCache>();
 
         return services;
