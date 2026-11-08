@@ -9,6 +9,7 @@
     <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.14" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.14" />
     <PackageVersion Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.14" />
     <PackageVersion Include="Scalar.AspNetCore" Version="2.18.7" />
   </ItemGroup>
   <ItemGroup Label="Transitive pins">

@@ -12,4 +12,5 @@
   <Project Path="src/ShortLink.Contracts/ShortLink.Contracts.csproj" Id="5f6fba87-4683-4ebf-9467-19726f9078e2" />
   <Project Path="src/ShortLink.Domain/ShortLink.Domain.csproj" Id="34bbef24-328d-4c00-8a1e-085f23897e96" />
   <Project Path="src/ShortLink.Infrastructure/ShortLink.Infrastructure.csproj" Id="516525f4-2fb1-4b2b-9475-c762b3c0fdd5" />
+  <Project Path="src/ShortLink.Worker/ShortLink.Worker.csproj" Id="b33a9e58-78ee-40a6-be98-539b4d76ed90" />
 </Solution>
