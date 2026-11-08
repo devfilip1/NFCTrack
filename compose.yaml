@@ -29,5 +29,22 @@ services:
       timeout: 3s
       retries: 5
 
+  api:
+    build:
+      context: ./Server
+      dockerfile: src/ShortLink.Api/Dockerfile
+    container_name: shortlink-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Database: "Server=sqlserver,1433;Database=ShortLink;User Id=sa;Password=${MSSQL_SA_PASSWORD};TrustServerCertificate=True"
+      ConnectionStrings__Redis: "redis:6379"
+    ports:
+      - "8080:8080"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
 volumes:
   sqlserver-data:
