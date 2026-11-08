@@ -1,8 +1,9 @@
-﻿using ShortLink.Domain.Links;
+﻿using ShortLink.Application.Clicks;
+using ShortLink.Domain.Links;
 
 namespace ShortLink.Application.Links;
 
-public sealed class LinkService(ILinkRepository links, TimeProvider timeProvider, ILinkCache cache)
+public sealed class LinkService(ILinkRepository links, TimeProvider timeProvider, ILinkCache cache, IClickTracker clickTracker)
 {
     private const int MaxSlugGenerationAttempts = 5;
 
@@ -26,24 +27,27 @@ public sealed class LinkService(ILinkRepository links, TimeProvider timeProvider
         return link is null ? null : LinkResponse.From(link);
     }
 
-    public async Task<string?> ResolveDestinationAsync(string slug, CancellationToken cancellationToken)
+    public async Task<string?> ResolveDestinationAsync(string slug, string? userAgent, string? referrer, CancellationToken cancellationToken)
     {
         var normalizedSlug = Slug.Normalize(slug);
         if (!Slug.IsValid(normalizedSlug))
             return null;
 
-        var cachedDestination = await cache.GetDestinationAsync(normalizedSlug, cancellationToken);
+        var destination = await cache.GetDestinationAsync(normalizedSlug, cancellationToken);
 
-        if (cachedDestination != null) return cachedDestination;
+        if (destination is null)
+        {
+            var link = await links.GetBySlugAsync(normalizedSlug, cancellationToken);
+            if (link is null) return null;
 
+            destination = link.DestinationUrl;
 
-        var link = await links.GetBySlugAsync(normalizedSlug, cancellationToken);
+            await cache.SetDestinationAsync(normalizedSlug, link.DestinationUrl, cancellationToken);
+        }
 
-        if (link is null) return null;
+        await clickTracker.TrackAsync(normalizedSlug, timeProvider.GetUtcNow(), userAgent, referrer, cancellationToken);
 
-        await cache.SetDestinationAsync(normalizedSlug, link.DestinationUrl, cancellationToken);
-
-        return link.DestinationUrl;
+        return destination;
     }
 
     public async Task<IReadOnlyList<LinkResponse>> ListAsync(CancellationToken cancellationToken)

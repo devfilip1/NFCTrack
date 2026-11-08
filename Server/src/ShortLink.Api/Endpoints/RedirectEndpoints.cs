@@ -13,9 +13,9 @@ public static class RedirectEndpoints
     }
 
 
-    private static async Task<Results<RedirectHttpResult, NotFound>> RedirectAsync(string slug, LinkService service,CancellationToken cancellationToken)
+    private static async Task<Results<RedirectHttpResult, NotFound>> RedirectAsync(string slug, HttpRequest request, LinkService service,CancellationToken cancellationToken)
     {
-        var link = await service.ResolveDestinationAsync(slug, cancellationToken);
+        var link = await service.ResolveDestinationAsync(slug, request.Headers.UserAgent.ToString(), request.Headers.Referer.ToString(), cancellationToken);
 
         if (link is null)
             return TypedResults.NotFound();
