@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
+using ShortLink.Application.Clicks;
 using ShortLink.Application.Links;
 
 namespace ShortLink.Api.Endpoints;
@@ -14,6 +15,7 @@ public static class LinkEndpoints
         group.MapGet("/", ListAsync).WithName("ListLinks");
         group.MapPut("/{id:guid}", UpdateAsync).WithName("UpdateLink");
         group.MapDelete("/{id:guid}", DeleteAsync).WithName("DeleteLink");
+        group.MapGet("/{id:guid}/stats", GetStatsAsync).WithName("GetLinkStats");
 
         return endpoints;
     }
@@ -79,5 +81,17 @@ public static class LinkEndpoints
         }
 
         return TypedResults.NoContent();
+    }
+
+    private static async Task<Results<Ok<LinkStatsResponse>, NotFound>> GetStatsAsync(Guid id, int? days,
+        ClickService service,
+        CancellationToken cancellationToken)
+    {
+        var stats = await service.GetStatsAsync(id, days ?? ClickService.DefaultStatsDays, cancellationToken);
+
+        if (stats is null)
+            return TypedResults.NotFound();
+
+        return TypedResults.Ok(stats);
     }
 }

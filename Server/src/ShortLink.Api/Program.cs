@@ -1,6 +1,7 @@
 using Scalar.AspNetCore;
 using ShortLink.Api.Endpoints;
 using ShortLink.Api.ErrorHandling;
+using ShortLink.Application.Clicks;
 using ShortLink.Application.Links;
 using ShortLink.Infrastructure;
 using ShortLink.Infrastructure.Persistence;
@@ -14,6 +15,7 @@ builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<ProblemDetailsExceptionHandler>();
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddScoped<LinkService>();
+builder.Services.AddScoped<ClickService>();
 
 var app = builder.Build();
 
