@@ -8,7 +8,7 @@ public static class LinkEndpoints
 {
     public static IEndpointRouteBuilder MapLinkEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        var group = endpoints.MapGroup("/api/links").WithTags("Links");
+        var group = endpoints.MapGroup("/api/links").WithTags("Links").RequireAuthorization();
 
         group.MapGet("/{id:guid}", GetByIdAsync).WithName("GetLinkById");
         group.MapPost("/", CreateAsync).WithName("CreateLink");

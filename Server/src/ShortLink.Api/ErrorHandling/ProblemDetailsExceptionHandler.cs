@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using ShortLink.Application.Auth;
 using ShortLink.Application.Links;
 using ShortLink.Domain;
 
@@ -13,6 +14,7 @@ internal sealed class ProblemDetailsExceptionHandler(IProblemDetailsService prob
         {
             DomainException => (StatusCodes.Status400BadRequest, "Invalid request"),
             SlugAlreadyInUseException => (StatusCodes.Status409Conflict, "Slug is already in use"),
+            RegistrationFailedException => (StatusCodes.Status400BadRequest, "Registration failed"),
             _ => null
         };
 

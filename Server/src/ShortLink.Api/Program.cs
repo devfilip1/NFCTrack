@@ -1,4 +1,5 @@
 using Scalar.AspNetCore;
+using ShortLink.Api.Auth;
 using ShortLink.Api.Endpoints;
 using ShortLink.Api.ErrorHandling;
 using ShortLink.Application.Clicks;
@@ -11,6 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddMessaging(builder.Configuration);
+builder.Services.AddIdentityServices(builder.Configuration);
+builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<ProblemDetailsExceptionHandler>();
 builder.Services.AddSingleton(TimeProvider.System);
@@ -30,6 +33,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapAuthEndpoints();
 app.MapLinkEndpoints();
 app.MapRedirectEndpoints();
 
