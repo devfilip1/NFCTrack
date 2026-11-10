@@ -8,6 +8,8 @@ using ShortLink.Infrastructure.Caching;
 using ShortLink.Application.Clicks;
 using MassTransit;
 using ShortLink.Infrastructure.Messaging;
+using ShortLink.Infrastructure.Identity;
+using ShortLink.Application.Auth;
 
 namespace ShortLink.Infrastructure;
 
@@ -60,6 +62,27 @@ public static class DependencyInjection
         });
 
         services.AddScoped<IClickTracker, MassTransitClickTracker>();
+
+        return services;
+    }
+
+    public static IServiceCollection AddIdentityServices(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddOptions<JwtOptions>()
+            .Bind(configuration.GetSection(JwtOptions.SectionName))
+            .Validate(o => o.SigningKey.Length >= 32, "Jwt:SigningKey must be at least 32 characters.")
+            .Validate(o => o.ExpirationMinutes > 0, "Jwt:ExpirationMinutes must be greater than zero.")
+            .ValidateOnStart();
+
+        services.AddIdentityCore<ApplicationUser>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+                options.Password.RequiredLength = 8;
+            })
+            .AddEntityFrameworkStores<AppDbContext>();
+
+        services.AddScoped<JwtTokenGenerator>();
+        services.AddScoped<IAuthService, IdentityAuthService>();
 
         return services;
     }
