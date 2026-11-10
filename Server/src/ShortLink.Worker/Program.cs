@@ -4,6 +4,7 @@ using ShortLink.Worker.Consumers;
 
 var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddScoped<ClickService>();
 builder.Services.AddMessaging(builder.Configuration, x => x.AddConsumer<LinkClickedConsumer>());
 
