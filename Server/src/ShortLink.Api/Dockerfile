@@ -4,6 +4,7 @@ WORKDIR /src
 COPY .editorconfig Directory.Build.props Directory.Packages.props nuget.config ./
 COPY src/ShortLink.Domain/ShortLink.Domain.csproj src/ShortLink.Domain/
 COPY src/ShortLink.Application/ShortLink.Application.csproj src/ShortLink.Application/
+COPY src/ShortLink.Contracts/ShortLink.Contracts.csproj src/ShortLink.Contracts/
 COPY src/ShortLink.Infrastructure/ShortLink.Infrastructure.csproj src/ShortLink.Infrastructure/
 COPY src/ShortLink.Api/ShortLink.Api.csproj src/ShortLink.Api/
 RUN dotnet restore src/ShortLink.Api/ShortLink.Api.csproj

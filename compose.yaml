@@ -57,6 +57,9 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__Database: "Server=sqlserver,1433;Database=ShortLink;User Id=sa;Password=${MSSQL_SA_PASSWORD};TrustServerCertificate=True"
       ConnectionStrings__Redis: "redis:6379"
+      RabbitMq__Host: rabbitmq
+      RabbitMq__Username: ${RABBITMQ_USER}
+      RabbitMq__Password: ${RABBITMQ_PASSWORD}
     ports:
       - "8080:8080"
     depends_on:
@@ -64,6 +67,31 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  worker:
+    build:
+      context: ./Server
+      dockerfile: src/ShortLink.Worker/Dockerfile
+    container_name: shortlink-worker
+    environment:
+      DOTNET_ENVIRONMENT: Development
+      ConnectionStrings__Database: "Server=sqlserver,1433;Database=ShortLink;User Id=sa;Password=${MSSQL_SA_PASSWORD};TrustServerCertificate=True"
+      ConnectionStrings__Redis: "redis:6379"
+      RabbitMq__Host: rabbitmq
+      RabbitMq__Username: ${RABBITMQ_USER}
+      RabbitMq__Password: ${RABBITMQ_PASSWORD}
+    restart: unless-stopped
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      api:
+        condition: service_started
 
 volumes:
   sqlserver-data:
