@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
+using ShortLink.Api.Auth;
 using ShortLink.Application.Clicks;
 using ShortLink.Application.Links;
+using System.Security.Claims;
 
 namespace ShortLink.Api.Endpoints;
 
@@ -22,10 +24,11 @@ public static class LinkEndpoints
 
     private static async Task<Results<Ok<LinkResponse>, NotFound>> GetByIdAsync(
         Guid id,
+        ClaimsPrincipal user,
         LinkService service,
         CancellationToken cancellationToken)
     {
-        var link = await service.GetByIdAsync(id, cancellationToken);
+        var link = await service.GetByIdAsync(id, user.GetUserId(), cancellationToken);
 
         if (link is null)
         {
@@ -37,29 +40,33 @@ public static class LinkEndpoints
 
     private static async Task<Created<LinkResponse>> CreateAsync(
         CreateLinkRequest request,
+        ClaimsPrincipal user,
         LinkService service,
         CancellationToken cancellationToken)
     {
-        var link = await service.CreateAsync(request, cancellationToken);
+        var link = await service.CreateAsync(user.GetUserId(), request, cancellationToken);
 
         return TypedResults.Created($"/api/links/{link.Id}", link);
     }
 
     private static async Task<Ok<IReadOnlyList<LinkResponse>>> ListAsync(
+        ClaimsPrincipal user,
         LinkService service,
         CancellationToken cancellationToken)
     {
-        var links = await service.ListAsync(cancellationToken);
+        var links = await service.ListAsync(user.GetUserId(), cancellationToken);
 
         return TypedResults.Ok(links);
     }
 
-    private static async Task<Results<Ok<LinkResponse>, NotFound>> UpdateAsync(Guid id,
+    private static async Task<Results<Ok<LinkResponse>, NotFound>> UpdateAsync(
+        Guid id,
         UpdateLinkRequest request,
+        ClaimsPrincipal user,
         LinkService service,
         CancellationToken cancellationToken)
     {
-        var link = await service.UpdateDestinationAsync(id, request, cancellationToken);
+        var link = await service.UpdateDestinationAsync(id, user.GetUserId(), request, cancellationToken);
 
         if (link is null)
         {
@@ -69,11 +76,13 @@ public static class LinkEndpoints
         return TypedResults.Ok(link);
     }
 
-    private static async Task<Results<NoContent, NotFound>> DeleteAsync(Guid id,
+    private static async Task<Results<NoContent, NotFound>> DeleteAsync(
+        Guid id,
+        ClaimsPrincipal user,
         LinkService service,
         CancellationToken cancellationToken)
     {
-        var deleted = await service.DeleteAsync(id, cancellationToken);
+        var deleted = await service.DeleteAsync(id, user.GetUserId(), cancellationToken);
 
         if (!deleted)
         {
@@ -83,11 +92,14 @@ public static class LinkEndpoints
         return TypedResults.NoContent();
     }
 
-    private static async Task<Results<Ok<LinkStatsResponse>, NotFound>> GetStatsAsync(Guid id, int? days,
+    private static async Task<Results<Ok<LinkStatsResponse>, NotFound>> GetStatsAsync(
+        Guid id,
+        int? days,
+        ClaimsPrincipal user,
         ClickService service,
         CancellationToken cancellationToken)
     {
-        var stats = await service.GetStatsAsync(id, days ?? ClickService.DefaultStatsDays, cancellationToken);
+        var stats = await service.GetStatsAsync(id, user.GetUserId(), days ?? ClickService.DefaultStatsDays, cancellationToken);
 
         if (stats is null)
             return TypedResults.NotFound();

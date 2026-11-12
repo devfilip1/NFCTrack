@@ -16,13 +16,14 @@ internal sealed class LinkRepository(AppDbContext dbContext) : ILinkRepository
 
     public Task<bool> SlugExistsAsync(string slug, CancellationToken cancellationToken) => dbContext.Links.AnyAsync(link => link.Slug == slug, cancellationToken);
 
-    public async Task<IReadOnlyList<Link>> ListAsync(CancellationToken cancellationToken) => await dbContext.Links
+    public async Task<IReadOnlyList<Link>> ListAsync(Guid ownerId, CancellationToken cancellationToken) => await dbContext.Links
         .AsNoTracking()
+        .Where(link => link.OwnerId == ownerId)
         .OrderByDescending(link => link.CreatedAt)
         .ToListAsync(cancellationToken);
 
     public void Add(Link link) => dbContext.Links.Add(link);
-    
+
     public void Remove(Link link) => dbContext.Links.Remove(link);
 
     public async Task SaveChangesAsync(CancellationToken cancellationToken)

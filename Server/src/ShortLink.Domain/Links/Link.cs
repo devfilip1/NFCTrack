@@ -5,21 +5,26 @@ public sealed class Link
     public const int DestinationUrlMaxLength = 2048;
 
     public Guid Id { get; private set; }
+    public Guid OwnerId { get; private set; }
     public string Slug { get; private set; }
     public string DestinationUrl { get; private set; }
     public DateTimeOffset CreatedAt { get; private set; }
     public DateTimeOffset? UpdatedAt { get; private set; }
 
-    private Link(Guid id, string slug, string destinationUrl, DateTimeOffset createdAt)
+    private Link(Guid id, Guid ownerId, string slug, string destinationUrl, DateTimeOffset createdAt)
     {
         Id = id;
+        OwnerId = ownerId;
         Slug = slug;
         DestinationUrl = destinationUrl;
         CreatedAt = createdAt;
     }
 
-    public static Link Create(string slug, string destinationUrl, DateTimeOffset now)
+    public static Link Create(Guid ownerId, string slug, string destinationUrl, DateTimeOffset now)
     {
+        if (ownerId == Guid.Empty)
+            throw new DomainException("Link owner is required.");
+
         var normalizedSlug = Links.Slug.Normalize(slug);
 
         if (!Links.Slug.IsValid(normalizedSlug))
@@ -29,8 +34,10 @@ public sealed class Link
                 "contain only lowercase letters, digits and single hyphens, and not be reserved.");
         }
 
-        return new Link(Guid.CreateVersion7(), normalizedSlug, EnsureValidDestination(destinationUrl), now);
+        return new Link(Guid.CreateVersion7(), ownerId, normalizedSlug, EnsureValidDestination(destinationUrl), now);
     }
+
+    public bool IsOwnedBy(Guid userId) => OwnerId == userId;
 
     public void ChangeDestination(string destinationUrl, DateTimeOffset now)
     {

@@ -192,6 +192,9 @@ namespace ShortLink.Infrastructure.Persistence.Migrations
                         .HasMaxLength(2048)
                         .HasColumnType("nvarchar(2048)");
 
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Slug")
                         .IsRequired()
                         .HasMaxLength(32)
@@ -202,6 +205,8 @@ namespace ShortLink.Infrastructure.Persistence.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("OwnerId");
 
                     b.HasIndex("Slug")
                         .IsUnique();
@@ -331,6 +336,15 @@ namespace ShortLink.Infrastructure.Persistence.Migrations
                     b.HasOne("ShortLink.Domain.Links.Link", null)
                         .WithMany()
                         .HasForeignKey("LinkId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ShortLink.Domain.Links.Link", b =>
+                {
+                    b.HasOne("ShortLink.Infrastructure.Identity.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

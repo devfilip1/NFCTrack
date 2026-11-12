@@ -1,56 +1,92 @@
 @host = https://localhost:7172
-@email = filipi@example.com
 @password = Senha123!
+@emailA = ana@example.com
+@emailB = bruno@example.com
 
-### Register
+### 1. Register user A (400 if it already exists, that's fine)
 POST {{host}}/api/auth/register
 Content-Type: application/json
 
 {
-  "email": "{{email}}",
+  "email": "{{emailA}}",
   "password": "{{password}}"
 }
 
-### Login
-# @name login
+### 2. Register user B (400 if it already exists, that's fine)
+POST {{host}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "{{emailB}}",
+  "password": "{{password}}"
+}
+
+### 3. Login user A
+# @name loginA
 POST {{host}}/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "{{email}}",
+  "email": "{{emailA}}",
   "password": "{{password}}"
 }
 
-### List links without token (expect 401)
-GET {{host}}/api/links
+### 4. Login user B
+# @name loginB
+POST {{host}}/api/auth/login
+Content-Type: application/json
 
-### List links with token (expect 200)
-GET {{host}}/api/links
-Authorization: Bearer {{login.response.body.$.accessToken}}
+{
+  "email": "{{emailB}}",
+  "password": "{{password}}"
+}
 
-### Create link with token (expect 201)
+### 5. User A creates a link (expect 201)
+# @name createLink
 POST {{host}}/api/links
-Authorization: Bearer {{login.response.body.$.accessToken}}
+Authorization: Bearer {{loginA.response.body.$.accessToken}}
 Content-Type: application/json
 
 {
   "destinationUrl": "https://example.com"
 }
 
-### Wrong password (expect 401)
-POST {{host}}/api/auth/login
+### 6. User A lists links (expect 200 with the link)
+GET {{host}}/api/links
+Authorization: Bearer {{loginA.response.body.$.accessToken}}
+
+### 7. User B lists links (expect 200 with an empty list)
+GET {{host}}/api/links
+Authorization: Bearer {{loginB.response.body.$.accessToken}}
+
+### 8. User B gets A's link (expect 404)
+GET {{host}}/api/links/{{createLink.response.body.$.id}}
+Authorization: Bearer {{loginB.response.body.$.accessToken}}
+
+### 9. User B updates A's link (expect 404)
+PUT {{host}}/api/links/{{createLink.response.body.$.id}}
+Authorization: Bearer {{loginB.response.body.$.accessToken}}
 Content-Type: application/json
 
 {
-  "email": "{{email}}",
-  "password": "Errada123!"
+  "destinationUrl": "https://evil.example.com"
 }
 
-### Weak password (expect 400)
-POST {{host}}/api/auth/register
-Content-Type: application/json
+### 10. User B reads A's stats (expect 404)
+GET {{host}}/api/links/{{createLink.response.body.$.id}}/stats
+Authorization: Bearer {{loginB.response.body.$.accessToken}}
 
-{
-  "email": "outro@example.com",
-  "password": "123"
-}
+### 11. User B deletes A's link (expect 404)
+DELETE {{host}}/api/links/{{createLink.response.body.$.id}}
+Authorization: Bearer {{loginB.response.body.$.accessToken}}
+
+### 12. Redirect is public (expect 302)
+GET {{host}}/{{createLink.response.body.$.slug}}
+
+### 13. User A reads own stats (expect 200)
+GET {{host}}/api/links/{{createLink.response.body.$.id}}/stats?days=7
+Authorization: Bearer {{loginA.response.body.$.accessToken}}
+
+### 14. User A deletes own link (expect 204)
+DELETE {{host}}/api/links/{{createLink.response.body.$.id}}
+Authorization: Bearer {{loginA.response.body.$.accessToken}}

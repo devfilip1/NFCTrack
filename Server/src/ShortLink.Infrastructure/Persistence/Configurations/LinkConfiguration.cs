@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ShortLink.Domain.Links;
+using ShortLink.Infrastructure.Identity;
 
 namespace ShortLink.Infrastructure.Persistence.Configurations;
 
@@ -24,5 +25,9 @@ internal sealed class LinkConfiguration : IEntityTypeConfiguration<Link>
             .HasMaxLength(Link.DestinationUrlMaxLength)
             .IsRequired();
 
+        builder.HasOne<ApplicationUser>()
+            .WithMany()
+            .HasForeignKey(link => link.OwnerId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

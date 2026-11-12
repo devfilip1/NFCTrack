@@ -24,14 +24,14 @@ public sealed class ClickService(ILinkRepository links, IClickRepository clicks,
         return true;
     }
 
-    public async Task<LinkStatsResponse?> GetStatsAsync(Guid linkId, int days, CancellationToken cancellationToken)
+    public async Task<LinkStatsResponse?> GetStatsAsync(Guid linkId, Guid ownerId, int days, CancellationToken cancellationToken)
     {
         if (days < 1 || days > MaxStatsDays)
             throw new DomainException($"Days must be between 1 and {MaxStatsDays}.");
 
         var link = await links.GetByIdAsync(linkId, cancellationToken);
 
-        if (link is null) return null;
+        if (link is null || !link.IsOwnedBy(ownerId)) return null;
 
         var today = DateOnly.FromDateTime(timeProvider.GetUtcNow().UtcDateTime);
         var firstDay = today.AddDays(-(days - 1));
