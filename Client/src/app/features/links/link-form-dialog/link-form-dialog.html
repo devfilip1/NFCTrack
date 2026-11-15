@@ -1,0 +1,39 @@
+<h2 mat-dialog-title>{{ isEdit ? 'Edit link' : 'New link' }}</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <mat-dialog-content>
+    <mat-form-field appearance="outline">
+      <mat-label>Destination URL</mat-label>
+      <input
+        matInput
+        type="url"
+        formControlName="destinationUrl"
+        placeholder="https://g.page/r/..."
+        cdkFocusInitial
+      />
+      <mat-error>Enter a URL starting with http:// or https://</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Custom slug (optional)</mat-label>
+      <input matInput formControlName="slug" autocomplete="off" />
+      @if (isEdit) {
+        <mat-hint>The slug cannot be changed</mat-hint>
+      } @else {
+        <mat-hint>Leave empty to generate one</mat-hint>
+      }
+      <mat-error>3-32 lowercase letters, digits or single hyphens</mat-error>
+    </mat-form-field>
+
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" mat-dialog-close>Cancel</button>
+    <button mat-flat-button type="submit" [disabled]="loading()">
+      {{ isEdit ? 'Save' : 'Create' }}
+    </button>
+  </mat-dialog-actions>
+</form>
