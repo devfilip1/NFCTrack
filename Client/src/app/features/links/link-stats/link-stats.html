@@ -1,0 +1,121 @@
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <a routerLink="/links">Links</a>
+  <mat-icon aria-hidden="true">chevron_right</mat-icon>
+  <span>
+    @if (link.value(); as current) {
+      /{{ current.slug }}
+    } @else {
+      …
+    }
+  </span>
+</nav>
+
+@if (link.error()) {
+  <p class="error">This link does not exist or you do not have access to it.</p>
+} @else if (link.value(); as current) {
+  <header class="header">
+    <div class="title">
+      <h1 class="mono">/{{ current.slug }}</h1>
+      <div class="short-url">
+        <span class="mono">{{ shortUrl() }}</span>
+        <button class="copy" (click)="copy()">
+          <mat-icon>content_copy</mat-icon>
+          Copy
+        </button>
+      </div>
+      <p class="destination">
+        Redirects to
+        <a [href]="current.destinationUrl" target="_blank" rel="noopener">{{
+          current.destinationUrl
+        }}</a>
+      </p>
+    </div>
+
+    <mat-button-toggle-group
+      hideSingleSelectionIndicator
+      aria-label="Period"
+      [value]="days()"
+      (change)="days.set($event.value)"
+    >
+      @for (period of periods; track period) {
+        <mat-button-toggle [value]="period">{{ period }} days</mat-button-toggle>
+      }
+    </mat-button-toggle-group>
+  </header>
+
+  @if (stats.isLoading()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  @if (stats.error()) {
+    <p class="error">Could not load the stats. Try again later.</p>
+  } @else if (stats.value(); as current) {
+    <section class="tiles">
+      <mat-card appearance="outlined">
+        <mat-card-content>
+          <span class="tile-label">Total clicks</span>
+          <span class="tile-value">{{ current.totalClicks }}</span>
+          <span class="tile-note">since {{ link.value()?.createdAt | date: 'mediumDate' }}</span>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card appearance="outlined">
+        <mat-card-content>
+          <span class="tile-label">Last {{ days() }} days</span>
+          <span class="tile-value">{{ periodClicks() }}</span>
+          <span class="tile-note">
+            {{ (periodClicks() / days()).toFixed(1) }} per day on average
+          </span>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card appearance="outlined">
+        <mat-card-content>
+          <span class="tile-label">Busiest day</span>
+          @if (busiestDay(); as best) {
+            <span class="tile-value">{{ best.date | date: 'MMM d' : 'UTC' }}</span>
+            <span class="tile-note">{{ best.clicks }} click{{ best.clicks === 1 ? '' : 's' }}</span>
+          } @else {
+            <span class="tile-value">—</span>
+            <span class="tile-note">no clicks in this period</span>
+          }
+        </mat-card-content>
+      </mat-card>
+    </section>
+
+    <mat-card appearance="outlined" class="chart-card">
+      <mat-card-header>
+        <mat-card-title>Clicks per day</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <app-clicks-chart [daily]="current.daily" />
+
+        <details>
+          <summary>Show as table</summary>
+          @if (activeDays().length === 0) {
+            <p>No clicks in this period.</p>
+          } @else {
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Clicks</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (day of activeDays(); track day.date) {
+                  <tr>
+                    <td>{{ day.date | date: 'EEE, MMM d, y' : 'UTC' }}</td>
+                    <td>{{ day.clicks }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          }
+        </details>
+      </mat-card-content>
+    </mat-card>
+  }
+} @else {
+  <p>Loading...</p>
+}

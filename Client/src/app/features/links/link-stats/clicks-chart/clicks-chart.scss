@@ -1,0 +1,106 @@
+:host {
+  display: block;
+}
+
+.plot {
+  position: relative;
+  isolation: isolate;
+  height: 220px;
+  margin-left: 32px;
+  border-bottom: 1px solid var(--mat-sys-outline);
+}
+
+.gridline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-top: 1px dashed var(--mat-sys-outline-variant);
+}
+
+.tick-label {
+  position: absolute;
+  right: calc(100% + 8px);
+  transform: translateY(-50%);
+  font: var(--mat-sys-label-small);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.bars {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+}
+
+// The column is the hover target: full height, so tiny bars are still easy to hit.
+.column {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  outline: none;
+  cursor: default;
+
+  &:hover,
+  &:focus-visible {
+    background: color-mix(in srgb, var(--mat-sys-on-surface) 6%, transparent);
+
+    .tooltip {
+      display: flex;
+    }
+  }
+
+  &:focus-visible {
+    box-shadow: inset 0 0 0 2px var(--mat-sys-primary);
+  }
+}
+
+.bar {
+  width: 100%;
+  max-width: 24px;
+  border-radius: 4px 4px 0 0;
+  background: var(--mat-sys-primary);
+}
+
+.tooltip {
+  display: none;
+  // Pinned to the top of the plot so it never leaves the chart area.
+  position: absolute;
+  top: 4px;
+  z-index: 1;
+  flex-direction: column;
+  padding: 6px 10px;
+  border-radius: 8px;
+  white-space: nowrap;
+  background: var(--mat-sys-inverse-surface);
+  color: var(--mat-sys-inverse-on-surface);
+  font: var(--mat-sys-body-small);
+  pointer-events: none;
+
+  &.align-start {
+    left: 0;
+  }
+
+  &.align-center {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  &.align-end {
+    right: 0;
+  }
+}
+
+.tooltip-value {
+  font-weight: 500;
+}
+
+.x-axis {
+  display: flex;
+  justify-content: space-between;
+  margin: 6px 0 0 32px;
+  font: var(--mat-sys-label-small);
+  color: var(--mat-sys-on-surface-variant);
+}

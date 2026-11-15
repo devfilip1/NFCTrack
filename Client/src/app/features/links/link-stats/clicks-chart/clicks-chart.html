@@ -1,0 +1,32 @@
+<div class="chart" role="img" [attr.aria-label]="'Clicks per day, ' + daily().length + ' days'">
+  <div class="plot">
+    @for (tick of ticks(); track tick) {
+      <div class="gridline" [style.bottom.%]="(tick / max()) * 100">
+        <span class="tick-label">{{ tick }}</span>
+      </div>
+    }
+
+    <div class="bars">
+      @for (bar of bars(); track bar.date) {
+        <div
+          class="column"
+          tabindex="0"
+          [attr.aria-label]="(bar.date | date: 'MMM d' : 'UTC') + ': ' + bar.clicks + ' clicks'"
+        >
+          <div class="bar" [style.height.%]="bar.heightPercent"></div>
+          <div class="tooltip" [class]="'align-' + bar.tooltipAlign">
+            <span class="tooltip-date">{{ bar.date | date: 'EEE, MMM d' : 'UTC' }}</span>
+            <span class="tooltip-value">
+              {{ bar.clicks }} {{ bar.clicks === 1 ? 'click' : 'clicks' }}
+            </span>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="x-axis">
+    <span>{{ firstDate() | date: 'MMM d' : 'UTC' }}</span>
+    <span>{{ lastDate() | date: 'MMM d' : 'UTC' }}</span>
+  </div>
+</div>
