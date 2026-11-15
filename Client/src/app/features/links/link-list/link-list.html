@@ -1,0 +1,7 @@
+<h1>My links</h1>
+
+@for (link of links(); track link.id) {
+<p>{{link.slug}} → {{link.destinationUrl}}</p>
+} @empty {
+<p>No links yet.</p>
+}
