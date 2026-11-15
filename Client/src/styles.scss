@@ -1,39 +1,202 @@
-// Include theming for Angular Material with `mat.theme()`.
-// This Sass mixin will define CSS variables that are used for styling Angular Material
-// components according to the Material 3 design spec.
-// Learn more about theming and how to use it for your application's
-// custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
+
+// App-level design tokens. Material reads its own --mat-sys-* tokens (overridden below);
+// our components read these --app-* tokens so the whole UI shares one small palette.
+:root {
+  --app-bg: #f6f5f1;
+  --app-surface: #ffffff;
+  --app-border: #e4e1d9;
+  --app-border-strong: #cfcbc0;
+  --app-ink: #1c1b18;
+  --app-muted: #6d6a62;
+  --app-accent: #1f6b4f;
+  --app-accent-hover: #185a42;
+  --app-accent-soft: #e5efe9;
+  --app-danger: #b3261e;
+  --app-radius: 8px;
+  --app-font: 'IBM Plex Sans', system-ui, sans-serif;
+  --app-mono: 'IBM Plex Mono', ui-monospace, monospace;
+}
 
 html {
   height: 100%;
+
   @include mat.theme(
     (
       color: (
-        primary: mat.$azure-palette,
-        tertiary: mat.$blue-palette,
+        primary: mat.$green-palette,
+        tertiary: mat.$green-palette,
       ),
-      typography: Roboto,
+      typography: (
+        plain-family: 'IBM Plex Sans',
+        brand-family: 'IBM Plex Sans',
+      ),
       density: 0,
+    )
+  );
+
+  @include mat.theme-overrides(
+    (
+      primary: #1f6b4f,
+      on-primary: #ffffff,
+      primary-container: #e5efe9,
+      on-primary-container: #0f3a2a,
+      secondary-container: #e5efe9,
+      on-secondary-container: #0f3a2a,
+      background: #f6f5f1,
+      surface: #ffffff,
+      on-surface: #1c1b18,
+      on-surface-variant: #6d6a62,
+      outline: #cfcbc0,
+      outline-variant: #e4e1d9,
+      surface-container: #ffffff,
+      surface-container-low: #ffffff,
+      surface-container-high: #ffffff,
+      surface-container-highest: #f1efe9,
+      inverse-surface: #1c1b18,
+      inverse-on-surface: #f6f5f1,
+      error: #b3261e,
+    )
+  );
+
+  // Material 3 defaults to pill-shaped controls; squarer corners read as more "tool", less template.
+  @include mat.button-overrides(
+    (
+      filled-container-shape: 6px,
+      outlined-container-shape: 6px,
+      text-container-shape: 6px,
+      protected-container-shape: 6px,
+      tonal-container-shape: 6px,
+    )
+  );
+  @include mat.button-toggle-overrides(
+    (
+      shape: 6px,
+    )
+  );
+  @include mat.card-overrides(
+    (
+      outlined-container-shape: 8px,
+      outlined-outline-color: #e4e1d9,
+      title-text-size: 16px,
+      title-text-weight: 600,
+    )
+  );
+  @include mat.dialog-overrides(
+    (
+      container-shape: 10px,
+      subhead-size: 19px,
+      subhead-weight: 600,
+    )
+  );
+  @include mat.form-field-overrides(
+    (
+      outlined-container-shape: 6px,
+    )
+  );
+  @include mat.menu-overrides(
+    (
+      container-shape: 8px,
+    )
+  );
+  @include mat.table-overrides(
+    (
+      row-item-outline-color: #e4e1d9,
+      header-container-height: 44px,
+      row-item-container-height: 56px,
+    )
+  );
+  @include mat.snack-bar-overrides(
+    (
+      container-shape: 6px,
     )
   );
 }
 
 body {
-  // Default the application to a light color theme. This can be changed to
-  // `dark` to enable the dark color theme, or to `light dark` to defer to the
-  // user's system settings.
   color-scheme: light;
-
-  // Set a default background, font and text colors for the application using
-  // Angular Material's system-level CSS variables. Learn more about these
-  // variables at https://material.angular.dev/guide/system-variables
-  background-color: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
-  font: var(--mat-sys-body-medium);
-
-  // Reset the user agent margin.
   margin: 0;
   height: 100%;
+  background-color: var(--app-bg);
+  color: var(--app-ink);
+  font: var(--mat-sys-body-medium);
+  font-family: var(--app-font);
+  -webkit-font-smoothing: antialiased;
 }
-/* You can add global styles to this file, and also import other style files */
+
+h1,
+h2,
+h3 {
+  letter-spacing: -0.01em;
+}
+
+a {
+  color: var(--app-accent);
+}
+
+.mono {
+  font-family: var(--app-mono);
+}
+
+// Forms on the sign-in and registration pages.
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  button[type='submit'] {
+    height: 44px;
+    margin-top: 8px;
+  }
+}
+
+.auth-error {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: #fbeceb;
+  color: var(--app-danger);
+}
+
+.auth-switch {
+  margin: 24px 0 0;
+  color: var(--app-muted);
+}
+
+// Destructive actions. Menus and dialogs render in an overlay, outside component styles.
+.mat-mdc-menu-item.danger,
+.mat-mdc-menu-item.danger mat-icon {
+  color: var(--app-danger);
+}
+
+.mat-mdc-unelevated-button.danger {
+  --mat-button-filled-container-color: var(--app-danger);
+}
+
+// Small bordered "Copy" button used next to short links.
+.copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 10px;
+  border: 1px solid var(--app-border);
+  border-radius: 6px;
+  background: var(--app-surface);
+  color: var(--app-ink);
+  font: inherit;
+  font-size: 13px;
+  vertical-align: middle;
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--app-border-strong);
+    background: var(--app-bg);
+  }
+
+  mat-icon {
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+  }
+}

@@ -2,23 +2,22 @@ import { Component, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { AuthService } from '../../../core/auth/auth.service';
+import { AuthLayout } from '../auth-layout/auth-layout';
 
 @Component({
   selector: 'app-login',
   imports: [
     ReactiveFormsModule,
     RouterLink,
+    AuthLayout,
     MatButtonModule,
-    MatCardModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
   ],
   templateUrl: './login.html',
-  styleUrl: './login.scss'
 })
 export class Login {
   private readonly auth = inject(AuthService);
@@ -29,7 +28,7 @@ export class Login {
 
   protected readonly form = inject(NonNullableFormBuilder).group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', Validators.required]
+    password: ['', Validators.required],
   });
 
   protected submit(): void {
@@ -46,7 +45,7 @@ export class Login {
       error: () => {
         this.error.set('Invalid email or password.');
         this.loading.set(false);
-      }
+      },
     });
   }
 }

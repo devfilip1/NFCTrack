@@ -1,0 +1,136 @@
+:host {
+  display: grid;
+  grid-template-columns: minmax(380px, 5fr) 7fr;
+  min-height: 100vh;
+}
+
+.pitch {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 48px;
+  padding: 40px 48px;
+  background: var(--app-ink);
+  color: #f6f5f1;
+}
+
+.pitch-body {
+  max-width: 420px;
+
+  h2 {
+    margin: 0 0 12px;
+    font-size: 30px;
+    line-height: 1.15;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0;
+    color: #b9b5aa;
+    line-height: 1.6;
+  }
+}
+
+.card-demo {
+  margin: 40px 0 0;
+}
+
+.nfc-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 4px;
+  width: 300px;
+  aspect-ratio: 1.586;
+  padding: 22px;
+  box-sizing: border-box;
+  border-radius: 14px;
+  background: var(--app-accent);
+  transform: rotate(-3deg);
+}
+
+.waves {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 28px;
+  height: 28px;
+
+  path {
+    fill: none;
+    stroke: rgb(255 255 255 / 0.85);
+    stroke-width: 1.8;
+    stroke-linecap: round;
+  }
+}
+
+.card-label {
+  font-size: 13px;
+  color: rgb(255 255 255 / 0.75);
+}
+
+.card-url {
+  font-family: var(--app-mono);
+  font-size: 20px;
+  font-weight: 500;
+  color: #fff;
+}
+
+figcaption {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 28px;
+  font-size: 13px;
+  color: #b9b5aa;
+
+  .arrow {
+    color: #7fbf9f;
+  }
+}
+
+.pitch-footer {
+  color: #7d796f;
+}
+
+.panel {
+  display: grid;
+  place-items: center;
+  padding: 40px 24px;
+}
+
+.form-wrap {
+  width: 100%;
+  max-width: 360px;
+
+  h1 {
+    margin: 0 0 6px;
+    font-size: 26px;
+    font-weight: 600;
+  }
+}
+
+.subheading {
+  margin: 0 0 28px;
+  color: var(--app-muted);
+}
+
+.mobile-logo {
+  display: none;
+  margin-bottom: 32px;
+}
+
+@media (max-width: 860px) {
+  :host {
+    grid-template-columns: 1fr;
+  }
+
+  .pitch {
+    display: none;
+  }
+
+  .mobile-logo {
+    display: inline-flex;
+  }
+}

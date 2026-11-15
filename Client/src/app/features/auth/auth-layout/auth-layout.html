@@ -1,0 +1,39 @@
+<aside class="pitch">
+  <app-logo />
+
+  <div class="pitch-body">
+    <h2>One card. A link you can change.</h2>
+    <p>
+      Program your NFC cards and QR codes with a short link once. Point it somewhere new whenever
+      you need: the card keeps working, and every tap is counted.
+    </p>
+
+    <figure class="card-demo" aria-hidden="true">
+      <div class="nfc-card">
+        <svg class="waves" viewBox="0 0 24 24">
+          <path d="M9 7.5a6 6 0 0 1 0 9M13 4.5a10 10 0 0 1 0 15" />
+        </svg>
+        <span class="card-label">Tap to leave a review</span>
+        <span class="card-url">/cafe-aurora</span>
+      </div>
+      <figcaption>
+        <span class="mono">/cafe-aurora</span>
+        <span class="arrow">→</span>
+        <span class="mono">maps.google.com/…</span>
+      </figcaption>
+    </figure>
+  </div>
+
+  <small class="pitch-footer">ShortLink · .NET + Angular</small>
+</aside>
+
+<main class="panel">
+  <div class="form-wrap">
+    <app-logo class="mobile-logo" />
+    <h1>{{ heading() }}</h1>
+    @if (subheading()) {
+      <p class="subheading">{{ subheading() }}</p>
+    }
+    <ng-content />
+  </div>
+</main>

@@ -1,12 +1,28 @@
-<mat-toolbar class="toolbar">
-    <span>ShortLink</span>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a routerLink="/links" class="brand" aria-label="ShortLink home"><app-logo /></a>
+
+    <nav>
+      <a routerLink="/links" routerLinkActive="active">Links</a>
+    </nav>
+
     <span class="spacer"></span>
-    <button mat-button (click)="logout()">
+
+    <button class="account" [matMenuTriggerFor]="accountMenu" aria-label="Account">
+      <span class="avatar" aria-hidden="true">{{ (email() ?? '?').charAt(0) }}</span>
+      <span class="account-email">{{ email() }}</span>
+      <mat-icon>expand_more</mat-icon>
+    </button>
+
+    <mat-menu #accountMenu="matMenu" xPosition="before">
+      <button mat-menu-item (click)="logout()">
         <mat-icon>logout</mat-icon>
         <span>Sign out</span>
-    </button>
-</mat-toolbar>
+      </button>
+    </mat-menu>
+  </div>
+</header>
 
 <main>
-    <router-outlet />
+  <router-outlet />
 </main>

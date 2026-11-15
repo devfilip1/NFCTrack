@@ -3,23 +3,22 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { AuthService } from '../../../core/auth/auth.service';
+import { AuthLayout } from '../auth-layout/auth-layout';
 
 @Component({
   selector: 'app-register',
   imports: [
     ReactiveFormsModule,
     RouterLink,
+    AuthLayout,
     MatButtonModule,
-    MatCardModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
   ],
   templateUrl: './register.html',
-  styleUrl: './register.scss'
 })
 export class Register {
   private readonly auth = inject(AuthService);
@@ -30,7 +29,7 @@ export class Register {
 
   protected readonly form = inject(NonNullableFormBuilder).group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(8)]]
+    password: ['', [Validators.required, Validators.minLength(8)]],
   });
 
   protected submit(): void {
@@ -47,7 +46,7 @@ export class Register {
       error: (error: HttpErrorResponse) => {
         this.error.set(error.error?.detail ?? 'Registration failed. Please try again.');
         this.loading.set(false);
-      }
+      },
     });
   }
 }
