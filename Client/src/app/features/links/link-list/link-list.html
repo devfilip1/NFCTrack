@@ -1,7 +1,122 @@
-<h1>My links</h1>
+<header class="page-header">
+  <div>
+    <h1>Links</h1>
+    <p class="page-subtitle">
+      @if (links.value().length > 0) {
+        {{ links.value().length }} {{ links.value().length === 1 ? 'link' : 'links' }} · change a
+        destination at any time without reprinting cards.
+      } @else {
+        Short links for your NFC cards and QR codes.
+      }
+    </p>
+  </div>
+  <button mat-flat-button (click)="openCreate()">
+    <mat-icon>add</mat-icon>
+    New link
+  </button>
+</header>
 
-@for (link of links(); track link.id) {
-<p>{{link.slug}} → {{link.destinationUrl}}</p>
-} @empty {
-<p>No links yet.</p>
+@if (links.error()) {
+  <div class="notice notice-error" role="alert">
+    <mat-icon>error_outline</mat-icon>
+    <span>Could not load your links.</span>
+    <button mat-button (click)="links.reload()">Try again</button>
+  </div>
+} @else if (!links.isLoading() && links.value().length === 0) {
+  <section class="empty">
+    <div class="empty-icon"><mat-icon>link</mat-icon></div>
+    <h2>No links yet</h2>
+    <p>
+      Create a short link, write it to an NFC card or print it as a QR code, and change where it
+      points whenever you need.
+    </p>
+    <button mat-flat-button (click)="openCreate()">Create your first link</button>
+  </section>
+} @else {
+  <section class="table-card">
+    <div class="toolbar">
+      <label class="search">
+        <mat-icon>search</mat-icon>
+        <input
+          type="search"
+          placeholder="Search by slug or destination"
+          aria-label="Search links"
+          [value]="query()"
+          (input)="query.set($any($event.target).value)"
+        />
+      </label>
+    </div>
+
+    @if (links.isLoading()) {
+      <mat-progress-bar mode="indeterminate" />
+    }
+
+    <table mat-table [dataSource]="visibleLinks()">
+      <ng-container matColumnDef="slug">
+        <th mat-header-cell *matHeaderCellDef>Short link</th>
+        <td mat-cell *matCellDef="let link">
+          <a class="slug" [routerLink]="['/links', link.id]" (click)="$event.stopPropagation()">
+            <span class="slug-host">{{ shortLinkHost }}/</span>{{ link.slug }}
+          </a>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="destination">
+        <th mat-header-cell *matHeaderCellDef>Destination</th>
+        <td mat-cell *matCellDef="let link" [title]="link.destinationUrl">
+          @let destination = splitUrl(link.destinationUrl);
+          <span class="dest-host">{{ destination.host }}</span>
+          <span class="dest-rest">{{ destination.rest }}</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="createdAt">
+        <th mat-header-cell *matHeaderCellDef>Created</th>
+        <td mat-cell *matCellDef="let link">{{ link.createdAt | date: 'MMM d, y' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef><span class="visually-hidden">Actions</span></th>
+        <td mat-cell *matCellDef="let link" (click)="$event.stopPropagation()">
+          <div class="row-actions">
+            <button class="copy" aria-label="Copy short link" (click)="copy(link)">
+              <mat-icon>content_copy</mat-icon>
+              <span class="copy-label">Copy</span>
+            </button>
+            <button
+              mat-icon-button
+              [matMenuTriggerFor]="rowMenu"
+              [matMenuTriggerData]="{ link }"
+              aria-label="More actions"
+            >
+              <mat-icon>more_horiz</mat-icon>
+            </button>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columns"></tr>
+      <tr mat-row *matRowDef="let link; columns: columns" (click)="open(link)"></tr>
+      <tr class="no-results" *matNoDataRow>
+        <td [attr.colspan]="columns.length">No links match "{{ query() }}".</td>
+      </tr>
+    </table>
+  </section>
 }
+
+<mat-menu #rowMenu="matMenu" xPosition="before">
+  <ng-template matMenuContent let-link="link">
+    <a mat-menu-item [routerLink]="['/links', link.id]">
+      <mat-icon>insights</mat-icon>
+      <span>View clicks</span>
+    </a>
+    <button mat-menu-item (click)="openEdit(link)">
+      <mat-icon>edit</mat-icon>
+      <span>Change destination</span>
+    </button>
+    <button mat-menu-item class="danger" (click)="confirmDelete(link)">
+      <mat-icon>delete</mat-icon>
+      <span>Delete</span>
+    </button>
+  </ng-template>
+</mat-menu>
