@@ -94,6 +94,16 @@ services:
       api:
         condition: service_started
 
+  client:
+    build:
+      context: ./Client
+    container_name: shortlink-client
+    ports:
+      - "8081:80"
+    depends_on:
+      api:
+        condition: service_started
+
 volumes:
   sqlserver-data:
   rabbitmq-data:
