@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -42,8 +43,12 @@ export class Login {
 
     this.auth.login(this.form.getRawValue()).subscribe({
       next: () => void this.router.navigate(['/links']),
-      error: () => {
-        this.error.set('Invalid email or password.');
+      error: (err: HttpErrorResponse) => {
+        this.error.set(
+          err.status === 429
+            ? 'Too many attempts. Wait a minute and try again.'
+            : 'Invalid email or password.',
+        );
         this.loading.set(false);
       },
     });

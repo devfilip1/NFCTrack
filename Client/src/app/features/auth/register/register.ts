@@ -43,8 +43,12 @@ export class Register {
 
     this.auth.register(this.form.getRawValue()).subscribe({
       next: () => void this.router.navigate(['/links']),
-      error: (error: HttpErrorResponse) => {
-        this.error.set(error.error?.detail ?? 'Registration failed. Please try again.');
+      error: (err: HttpErrorResponse) => {
+        this.error.set(
+          err.status === 429
+            ? 'Too many attempts. Wait a minute and try again.'
+            : (err.error?.detail ?? 'Registration failed. Please try again.'),
+        );
         this.loading.set(false);
       },
     });
