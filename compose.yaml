@@ -63,6 +63,12 @@ services:
       Jwt__SigningKey: ${JWT_SIGNING_KEY:?Copy .env.example to .env}
     ports:
       - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/health/ready"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 30s
     depends_on:
       sqlserver:
         condition: service_healthy
@@ -92,7 +98,7 @@ services:
       rabbitmq:
         condition: service_healthy
       api:
-        condition: service_started
+        condition: service_healthy
 
   client:
     build:
@@ -102,7 +108,7 @@ services:
       - "8081:80"
     depends_on:
       api:
-        condition: service_started
+        condition: service_healthy
 
 volumes:
   sqlserver-data:

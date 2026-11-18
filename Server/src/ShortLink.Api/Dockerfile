@@ -13,6 +13,10 @@ COPY src/ src/
 RUN dotnet publish src/ShortLink.Api/ShortLink.Api.csproj -c Release -o /app/publish --no-restore
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
+# curl is used by the compose healthcheck; the base image (Ubuntu) does not ship it.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY --from=build /app/publish .
 USER $APP_UID
