@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
+using ShortLink.Api.RateLimiting;
 using ShortLink.Application.Auth;
 
 namespace ShortLink.Api.Endpoints;
@@ -7,7 +8,9 @@ public static class AuthEndpoints
 {
     public static IEndpointRouteBuilder MapAuthEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        var group = endpoints.MapGroup("/api/auth").WithTags("Auth");
+        var group = endpoints.MapGroup("/api/auth")
+            .WithTags("Auth")
+            .RequireRateLimiting(RateLimitPolicies.Auth);
 
         group.MapPost("/register", RegisterAsync).WithName("Register");
         group.MapPost("/login", LoginAsync).WithName("Login");
