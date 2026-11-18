@@ -2,25 +2,25 @@
   <app-logo />
 
   <div class="pitch-body">
-    <h2>One card. A link you can change.</h2>
+    <h2>Short links you can edit after sharing.</h2>
     <p>
-      Program your NFC cards and QR codes with a short link once. Point it somewhere new whenever
-      you need: the card keeps working, and every tap is counted.
+      Share a short link once and point it somewhere new whenever you need. Every click is counted,
+      so you can see which links people actually open.
     </p>
 
-    <figure class="card-demo" aria-hidden="true">
-      <div class="nfc-card">
-        <svg class="waves" viewBox="0 0 24 24">
-          <path d="M9 7.5a6 6 0 0 1 0 9M13 4.5a10 10 0 0 1 0 15" />
-        </svg>
-        <span class="card-label">Tap to leave a review</span>
-        <span class="card-url">/cafe-aurora</span>
+    <figure class="link-demo" aria-hidden="true">
+      <div class="demo-window">
+        <span class="demo-short">/summer-menu</span>
+        <div class="demo-row demo-old">
+          <span class="demo-arrow">→</span>
+          <span>trattoria.example/menu/spring</span>
+        </div>
+        <div class="demo-row demo-new">
+          <span class="demo-arrow">→</span>
+          <span>trattoria.example/menu/summer</span>
+        </div>
       </div>
-      <figcaption>
-        <span class="mono">/cafe-aurora</span>
-        <span class="arrow">→</span>
-        <span class="mono">maps.google.com/…</span>
-      </figcaption>
+      <figcaption>Same short link, new destination. Nothing to resend.</figcaption>
     </figure>
   </div>
 

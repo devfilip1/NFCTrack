@@ -1,13 +1,15 @@
 import { Component } from '@angular/core';
 
-/** Brand mark: a dot (the card) with two NFC waves, plus the wordmark. */
+/** Brand mark: two interlocking chain links, plus the wordmark. */
 @Component({
   selector: 'app-logo',
   template: `
     <svg viewBox="0 0 32 32" aria-hidden="true">
       <rect width="32" height="32" rx="7" class="tile" />
-      <circle cx="10" cy="16" r="2.5" class="glyph-fill" />
-      <path d="M15 10.5a7.5 7.5 0 0 1 0 11M19.5 7a12.5 12.5 0 0 1 0 18" class="glyph-stroke" />
+      <g transform="rotate(-45 16 16)" class="glyph">
+        <rect x="5" y="12.5" width="13" height="7" rx="3.5" />
+        <rect x="14" y="12.5" width="13" height="7" rx="3.5" />
+      </g>
     </svg>
     <span>shortlink</span>
   `,
@@ -31,15 +33,10 @@ import { Component } from '@angular/core';
       fill: var(--app-accent);
     }
 
-    .glyph-fill {
-      fill: #fff;
-    }
-
-    .glyph-stroke {
+    .glyph rect {
       fill: none;
       stroke: #fff;
       stroke-width: 2.4;
-      stroke-linecap: round;
     }
   `,
 })

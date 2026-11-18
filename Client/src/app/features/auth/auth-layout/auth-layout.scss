@@ -31,63 +31,56 @@
   }
 }
 
-.card-demo {
+.link-demo {
   margin: 40px 0 0;
 }
 
-.nfc-card {
-  position: relative;
+.demo-window {
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  gap: 4px;
-  width: 300px;
-  aspect-ratio: 1.586;
-  padding: 22px;
-  box-sizing: border-box;
-  border-radius: 14px;
-  background: var(--app-accent);
-  transform: rotate(-3deg);
-}
-
-.waves {
-  position: absolute;
-  top: 18px;
-  right: 18px;
-  width: 28px;
-  height: 28px;
-
-  path {
-    fill: none;
-    stroke: rgb(255 255 255 / 0.85);
-    stroke-width: 1.8;
-    stroke-linecap: round;
-  }
-}
-
-.card-label {
-  font-size: 13px;
-  color: rgb(255 255 255 / 0.75);
-}
-
-.card-url {
+  gap: 10px;
+  max-width: 340px;
+  padding: 20px 22px;
+  border: 1px solid #3a3833;
+  border-radius: 12px;
+  background: #262521;
   font-family: var(--app-mono);
+  font-size: 14px;
+}
+
+.demo-short {
+  margin-bottom: 4px;
+  color: #fff;
   font-size: 20px;
   font-weight: 500;
-  color: #fff;
+}
+
+.demo-row {
+  display: flex;
+  gap: 10px;
+}
+
+.demo-arrow {
+  color: #7d796f;
+}
+
+.demo-old {
+  color: #7d796f;
+  text-decoration: line-through;
+}
+
+.demo-new {
+  color: #9fd4b9;
+
+  .demo-arrow {
+    color: #9fd4b9;
+  }
 }
 
 figcaption {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 28px;
+  margin-top: 16px;
   font-size: 13px;
   color: #b9b5aa;
-
-  .arrow {
-    color: #7fbf9f;
-  }
 }
 
 .pitch-footer {

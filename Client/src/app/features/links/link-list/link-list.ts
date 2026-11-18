@@ -87,7 +87,7 @@ export class LinkList {
         data: {
           title: `Delete /${link.slug}?`,
           message:
-            'Cards and QR codes that use this link will stop working. Its click history is deleted too.',
+            'Anyone who opens this link will get a "not found" page. Its click history is deleted too.',
           confirmText: 'Delete link',
           destructive: true,
         },

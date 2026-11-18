@@ -4,9 +4,9 @@
     <p class="page-subtitle">
       @if (links.value().length > 0) {
         {{ links.value().length }} {{ links.value().length === 1 ? 'link' : 'links' }} · change a
-        destination at any time without reprinting cards.
+        destination at any time and the short link keeps working.
       } @else {
-        Short links for your NFC cards and QR codes.
+        Short links you can edit after sharing.
       }
     </p>
   </div>
@@ -26,10 +26,7 @@
   <section class="empty">
     <div class="empty-icon"><mat-icon>link</mat-icon></div>
     <h2>No links yet</h2>
-    <p>
-      Create a short link, write it to an NFC card or print it as a QR code, and change where it
-      points whenever you need.
-    </p>
+    <p>Create a short link, share it anywhere, and change where it points whenever you need.</p>
     <button mat-flat-button (click)="openCreate()">Create your first link</button>
   </section>
 } @else {
