@@ -2,7 +2,7 @@
 
 A URL shortener with click analytics, built with **.NET 10** and **Angular 22**.
 
-It started from a real need: I sell NFC cards that send customers to a business's Google review page. Writing a Google URL straight onto a card means the card is useless the day that URL changes. ShortLink puts a short link on the card instead, so the destination can be changed at any time without reprinting anything, and every tap is counted.
+You create a short link, share it anywhere, and change where it points whenever you need, while every click is counted. A URL shortener sounds like a weekend project: one table and a redirect. The goal here was to build one the way it would run in production, with redirects that stay fast even when the cache or the message broker is down.
 
 ![Links page](docs/screenshots/links.png)
 
@@ -22,9 +22,14 @@ It started from a real need: I sell NFC cards that send customers to a business'
 
 ## Architecture
 
+![Redirect flow](docs/redirect-flow.gif)
+
+<details>
+<summary>Same diagram as text</summary>
+
 ```mermaid
 flowchart LR
-    user([Browser / NFC tap])
+    user([Browser])
     spa[Angular SPA<br/>nginx :8081]
     api[ShortLink.Api<br/>ASP.NET Core :8080]
     worker[ShortLink.Worker]
@@ -41,6 +46,8 @@ flowchart LR
     mq --> worker
     worker -- "store click" --> sql
 ```
+
+</details>
 
 A redirect does as little as possible on the request path: it reads the destination from Redis (falling back to SQL Server on a miss), publishes a `LinkClicked` event and returns the `302`. The Worker consumes the event and stores the click, with retries.
 
@@ -94,8 +101,8 @@ Measured with Docker Compose by stopping each dependency while the app was runni
 You only need [Docker Desktop](https://www.docker.com/products/docker-desktop/).
 
 ```bash
-git clone https://github.com/devfilip1/NFCTrack.git
-cd NFCTrack
+git clone https://github.com/devfilip1/shortlink.git
+cd shortlink
 cp .env.example .env        # set your own passwords and a random JWT key (32+ characters)
 docker compose up -d --build
 ```
